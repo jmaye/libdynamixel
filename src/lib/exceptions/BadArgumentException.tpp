@@ -16,22 +16,41 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  ******************************************************************************/
 
-/** \file serialTest.cpp
-    \brief This file is a testing binary for serial port.
-  */
+#include <sstream>
 
-#include <iostream>
-#include <string>
+namespace dynamixel {
 
-#include "com/SerialPort.h"
+/******************************************************************************/
+/* Constructors and Destructor                                                */
+/******************************************************************************/
 
-using namespace dynamixel;
+  template <typename X>
+  BadArgumentException<X>::BadArgumentException(const X& argument, const
+      std::string& msg, const std::string& filename, size_t line, const
+      std::string& function) :
+      Exception(msg, filename, line, function) {
+    std::stringstream stream;
+    stream << "[argument = " << argument << "]";
+    outputMessage_.append(stream.str());
+  }
 
-int main(int /*argc*/, char **/*argv*/) {
-  SerialPort serialPort(std::string("/dev/starleth/dynamixel"), 1000000);
-  serialPort.open();
-  int value;
-  serialPort.read(reinterpret_cast<char*>(&value), sizeof(value));
-  serialPort.close();
-  return 0;
+  template <typename X>
+  BadArgumentException<X>::BadArgumentException(const BadArgumentException&
+      other) throw() :
+      Exception(other) {
+  }
+
+  template <typename X>
+  BadArgumentException<X>& BadArgumentException<X>::operator =
+      (const BadArgumentException& other) throw() {
+    if (this != &other) {
+      Exception::operator=(other);
+    }
+    return *this;
+  }
+
+  template <typename X>
+  BadArgumentException<X>::~BadArgumentException() throw() {
+  }
+
 }

@@ -16,22 +16,52 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  ******************************************************************************/
 
-/** \file serialTest.cpp
-    \brief This file is a testing binary for serial port.
+/** \file BadArgumentException.h
+    \brief This file defines the BadArgumentException class, which is thrown
+           whenever the arguments of a function are invalid.
   */
 
-#include <iostream>
+#ifndef LIBDYNAMIXEL_EXCEPTIONS_BAD_ARGUMENT_EXCEPTION_H
+#define LIBDYNAMIXEL_EXCEPTIONS_BAD_ARGUMENT_EXCEPTION_H
+
+#include <cstddef>
+
 #include <string>
 
-#include "com/SerialPort.h"
+#include "exceptions/Exception.h"
 
-using namespace dynamixel;
+namespace dynamixel {
 
-int main(int /*argc*/, char **/*argv*/) {
-  SerialPort serialPort(std::string("/dev/starleth/dynamixel"), 1000000);
-  serialPort.open();
-  int value;
-  serialPort.read(reinterpret_cast<char*>(&value), sizeof(value));
-  serialPort.close();
-  return 0;
+  /** The class BadArgumentException represents any exceptions occuring when the
+      arguments passed to a function are invalid.
+      \brief Bad argument exception
+    */
+  template <typename X> class BadArgumentException :
+    public Exception {
+  public:
+    /** \name Constructors/destructor
+      @{
+      */
+    /// Constructs exception from argument and string
+    BadArgumentException(const X& argument, const std::string& msg, const
+      std::string& filename = " ", size_t line = 0, const std::string&
+      function = " ");
+    /// Copy constructor
+    BadArgumentException(const BadArgumentException& other) throw();
+    /// Assignment operator
+    BadArgumentException& operator = (const BadArgumentException& other)
+      throw();
+    /// Destructor
+    virtual ~BadArgumentException() throw();
+    /** @}
+      */
+
+  protected:
+
+  };
+
 }
+
+#include "exceptions/BadArgumentException.tpp"
+
+#endif // LIBDYNAMIXEL_EXCEPTIONS_BAD_ARGUMENT_EXCEPTION_H

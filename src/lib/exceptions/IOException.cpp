@@ -16,22 +16,31 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  ******************************************************************************/
 
-/** \file serialTest.cpp
-    \brief This file is a testing binary for serial port.
-  */
+#include "exceptions/IOException.h"
 
-#include <iostream>
-#include <string>
+namespace dynamixel {
 
-#include "com/SerialPort.h"
+/******************************************************************************/
+/* Constructors and Destructor                                                */
+/******************************************************************************/
 
-using namespace dynamixel;
+  IOException::IOException(const std::string& msg, const std::string& filename,
+      size_t line, const std::string& function) :
+      Exception(msg, filename, line, function) {
+  }
 
-int main(int /*argc*/, char **/*argv*/) {
-  SerialPort serialPort(std::string("/dev/starleth/dynamixel"), 1000000);
-  serialPort.open();
-  int value;
-  serialPort.read(reinterpret_cast<char*>(&value), sizeof(value));
-  serialPort.close();
-  return 0;
+  IOException::IOException(const IOException& other) throw() :
+      Exception(other) {
+  }
+
+  IOException& IOException::operator = (const IOException& other) throw() {
+    if (this != &other) {
+      Exception::operator=(other);
+    }
+    return *this;
+  }
+
+  IOException::~IOException() throw() {
+  }
+
 }

@@ -16,22 +16,47 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  ******************************************************************************/
 
-/** \file serialTest.cpp
-    \brief This file is a testing binary for serial port.
+/** \file SystemException.h
+    \brief This file defines the SystemException class, which represents
+           low-level system exceptions.
   */
 
-#include <iostream>
+#ifndef LIBDYNAMIXEL_EXCEPTIONS_SYSTEM_EXCEPTION_H
+#define LIBDYNAMIXEL_EXCEPTIONS_SYSTEM_EXCEPTION_H
+
+#include <cstddef>
+
 #include <string>
 
-#include "com/SerialPort.h"
+#include "exceptions/Exception.h"
 
-using namespace dynamixel;
+namespace dynamixel {
 
-int main(int /*argc*/, char **/*argv*/) {
-  SerialPort serialPort(std::string("/dev/starleth/dynamixel"), 1000000);
-  serialPort.open();
-  int value;
-  serialPort.read(reinterpret_cast<char*>(&value), sizeof(value));
-  serialPort.close();
-  return 0;
+  /** The class SystemException represents system exceptions.
+      \brief System exceptions
+    */
+  class SystemException :
+    public Exception {
+  public:
+    /** \name Constructors/Destructor
+      @{
+      */
+    /// Constructs exception
+    SystemException(int errNo, const std::string& msg = "", const std::string&
+      filename = " ", size_t line = 0, const std::string& function = " ");
+    /// Copy constructor
+    SystemException(const SystemException& other) throw ();
+    /// Assignment operator
+    SystemException& operator = (const SystemException& other) throw();
+    /// Destructor
+    virtual ~SystemException() throw ();
+    /** @}
+      */
+
+  protected:
+
+  };
+
 }
+
+#endif // LIBDYNAMIXEL_EXCEPTIONS_SYSTEM_EXCEPTION_H

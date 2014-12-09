@@ -16,22 +16,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  ******************************************************************************/
 
-/** \file serialTest.cpp
-    \brief This file is a testing binary for serial port.
-  */
+#include "exceptions/SystemException.h"
 
-#include <iostream>
-#include <string>
+#include <cstring>
 
-#include "com/SerialPort.h"
+namespace dynamixel {
 
-using namespace dynamixel;
+/******************************************************************************/
+/* Constructors and Destructor                                                */
+/******************************************************************************/
 
-int main(int /*argc*/, char **/*argv*/) {
-  SerialPort serialPort(std::string("/dev/starleth/dynamixel"), 1000000);
-  serialPort.open();
-  int value;
-  serialPort.read(reinterpret_cast<char*>(&value), sizeof(value));
-  serialPort.close();
-  return 0;
+  SystemException::SystemException(int errNo, const std::string& msg, const
+      std::string& filename, size_t line, const std::string& function) :
+      Exception(msg + std::string(strerror(errNo)), filename, line,
+      function) {
+  }
+
+  SystemException::SystemException(const SystemException& other) throw() :
+      Exception(other) {
+  }
+
+  SystemException& SystemException::operator =
+      (const SystemException& other) throw() {
+    if (this != &other) {
+      Exception::operator=(other);
+    }
+    return *this;
+  }
+
+  SystemException::~SystemException() throw() {
+  }
+
 }

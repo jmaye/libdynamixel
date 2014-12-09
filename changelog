@@ -1,3 +1,9 @@
+libdynamixel (0.1-2) trusty; urgency=low
+
+  * Some more work done 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 09 Dec 2014 18:50:04 +0100
+
 libdynamixel (0.1-1) trusty; urgency=low
 
   * Initial commit
