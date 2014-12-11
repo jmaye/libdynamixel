@@ -2,6 +2,12 @@ libdynamixel (0.1-4) trusty; urgency=low
 
   * First working version 
 
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Thu, 11 Dec 2014 19:54:45 +0100
+
+libdynamixel (0.1-4) trusty; urgency=low
+
+  * First working version 
+
  -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Thu, 11 Dec 2014 19:51:41 +0100
 
 libdynamixel (0.1-2) trusty; urgency=low
