@@ -49,7 +49,7 @@ namespace dynamixel {
     /// Assignment operator
     IOException& operator = (const IOException& other) throw();
     /// Destructor
-    virtual ~IOException() throw ();
+    virtual ~IOException() throw () = default;
     /** @}
       */
 

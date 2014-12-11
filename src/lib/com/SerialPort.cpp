@@ -18,6 +18,8 @@
 
 #include "com/SerialPort.h"
 
+#include <ratio>
+
 #include <termios.h>
 #include <unistd.h>
 #include <cmath>
@@ -186,7 +188,7 @@ namespace dynamixel {
     if (flowControl_ == hardware)
       tios.c_cflag |= CRTSCTS;
     tios.c_cflag |= (CLOCAL | CREAD);
-    tios.c_iflag |= (INPCK | ISTRIP);
+    tios.c_iflag |= INPCK;
     tios.c_iflag &= ~(IXON | IXOFF | IXANY);
     if (flowControl_ == software)
       tios.c_iflag |= (IXON | IXOFF | IXANY);
@@ -230,14 +232,14 @@ namespace dynamixel {
     const double fractPart = std::modf(timeout_, &intPart);
     struct timeval waitd;
     waitd.tv_sec = intPart;
-    waitd.tv_usec = fractPart * 1e6;
+    waitd.tv_usec = fractPart * std::micro::den;
     size_t bytesRead = 0;
     fd_set readFlags;
     while (bytesRead < numBytes) {
       FD_ZERO(&readFlags);
       FD_SET(deviceHandle_, &readFlags);
-      int res = select(deviceHandle_ + 1, &readFlags, (fd_set*)0, (fd_set*)0,
-        &waitd);
+      int res = select(deviceHandle_ + 1, &readFlags,
+        reinterpret_cast<fd_set*>(0), reinterpret_cast<fd_set*>(0), &waitd);
       if(res < 0)
         throw SystemException(errno, "SerialPort::read()::select()");
       if (FD_ISSET(deviceHandle_, &readFlags)) {
@@ -259,14 +261,14 @@ namespace dynamixel {
     const double fractPart = std::modf(timeout_, &intPart);
     struct timeval waitd;
     waitd.tv_sec = intPart;
-    waitd.tv_usec = fractPart * 1e6;
+    waitd.tv_usec = fractPart * std::micro::den;
     size_t bytesWritten = 0;
     fd_set writeFlags;
     while (bytesWritten < numBytes) {
       FD_ZERO(&writeFlags);
       FD_SET(deviceHandle_, &writeFlags);
-      int res = select(deviceHandle_ + 1, (fd_set*)0, &writeFlags, (fd_set*)0,
-        &waitd);
+      int res = select(deviceHandle_ + 1, reinterpret_cast<fd_set*>(0),
+        &writeFlags, reinterpret_cast<fd_set*>(0), &waitd);
       if(res < 0)
         throw SystemException(errno, "SerialPort::write()::select()");
       if (FD_ISSET(deviceHandle_, &writeFlags)) {

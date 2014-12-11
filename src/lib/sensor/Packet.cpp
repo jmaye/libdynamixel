@@ -16,58 +16,61 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  ******************************************************************************/
 
-#include "exceptions/Exception.h"
+#include "sensor/Packet.h"
 
-#include <sstream>
+#include "com/BinaryReader.h"
+#include "com/BinaryWriter.h"
+#include "exceptions/IOException.h"
 
 namespace dynamixel {
 
 /******************************************************************************/
-/* Constructors and Destructor                                                */
+/* Methods                                                                    */
 /******************************************************************************/
 
-  Exception::Exception(const std::string& msg, const std::string& filename,
-      size_t line, const std::string& function) :
-      msg_(msg),
-      filename_(filename),
-      function_(function),
-      line_(line) {
-    std::stringstream stream;
-    if (function != " ")
-      stream << function << ": ";
-    stream << msg;
-    if (filename != " ")
-      stream << " [file = " << filename << "]";
-    if (line)
-      stream << "[line = " << line << "]";
-    outputMessage_ = stream.str();
+  uint8_t Packet::computeChecksum() const {
+    uint32_t sum = static_cast<uint32_t>(id_) + static_cast<uint32_t>(length_) +
+      static_cast<uint32_t>(instructionOrError_);
+    for (const auto& parameter : parameters_)
+      sum += static_cast<uint32_t>(parameter);
+    return ~(static_cast<uint8_t>(sum & 0x000000FF));
   }
 
-  Exception::Exception(const Exception& other) throw() :
-      msg_(other.msg_),
-      filename_(other.filename_),
-      function_(other.function_),
-      line_(other.line_),
-      outputMessage_(other.outputMessage_) {
-  }
-
-  Exception& Exception::operator = (const Exception& other) throw() {
-    if (this != &other) {
-      msg_ = other.msg_;
-      filename_ = other.filename_;
-      function_ = other.function_;
-      line_ = other.line_;
-      outputMessage_ = other.outputMessage_;
+  void Packet::read(BinaryReader& stream) {
+    while (true) {
+      uint16_t identifier;
+      stream >> identifier;
+      if (identifier == identifier_)
+        break;
     }
-    return *this;
+    stream >> id_ >> length_ >> instructionOrError_;
+    parameters_.clear();
+    parameters_.reserve(length_ - 2);
+    for (size_t i = 0; i < (static_cast<size_t>(length_) - 2); ++i) {
+      uint8_t parameter;
+      stream >> parameter;
+      parameters_.push_back(parameter);
+    }
+    stream >> checksum_;
+    if (checksum_ != computeChecksum())
+      throw IOException("Packet::read(): wrong checksum");
   }
 
-/******************************************************************************/
-/* Accessors                                                                  */
-/******************************************************************************/
+  void Packet::write(BinaryWriter& stream) const {
+    stream << identifier_ << id_ << length_ << instructionOrError_;
+    for (const auto& parameter : parameters_)
+      stream << parameter;
+    stream << checksum_;
+  }
 
-  const char* Exception::what() const throw() {
-    return outputMessage_.c_str();
+  BinaryReader& operator >> (BinaryReader& stream, Packet& obj) {
+    obj.read(stream);
+    return stream;
+  }
+
+  BinaryWriter& operator << (BinaryWriter& stream, const Packet& obj) {
+    obj.write(stream);
+    return stream;
   }
 
 }

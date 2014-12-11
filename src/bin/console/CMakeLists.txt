@@ -1,1 +1,1 @@
-remake_add_executables(LINK com)
+remake_add_executables(LINK sensor)

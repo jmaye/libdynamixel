@@ -16,52 +16,44 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  ******************************************************************************/
 
-/** \file BadArgumentException.h
-    \brief This file defines the BadArgumentException class, which is thrown
-           whenever the arguments of a function are invalid.
+/** \file Instructions.h
+    \brief This file defines the Instructions namespace which contains the
+           different instruction codes.
   */
 
-#ifndef LIBDYNAMIXEL_EXCEPTIONS_BAD_ARGUMENT_EXCEPTION_H
-#define LIBDYNAMIXEL_EXCEPTIONS_BAD_ARGUMENT_EXCEPTION_H
+#ifndef LIBDYNAMIXEL_SENSOR_INSTRUCTIONS_H
+#define LIBDYNAMIXEL_SENSOR_INSTRUCTIONS_H
 
-#include <cstddef>
-
-#include <string>
-
-#include "exceptions/Exception.h"
+#include <cstdint>
 
 namespace dynamixel {
 
-  /** The class BadArgumentException represents any exceptions occuring when the
-      arguments passed to a function are invalid.
-      \brief Bad argument exception
+  /** The namespace Instructions contains the different instruction codes.
+      \brief Instruction codes.
     */
-  template <typename X> class BadArgumentException :
-    public Exception {
-  public:
-    /** \name Constructors/destructor
+  namespace Instructions {
+    /** \name Public members
       @{
       */
-    /// Constructs exception from argument and string
-    BadArgumentException(const X& argument, const std::string& msg, const
-      std::string& filename = " ", size_t line = 0, const std::string&
-      function = " ");
-    /// Copy constructor
-    BadArgumentException(const BadArgumentException& other) throw();
-    /// Assignment operator
-    BadArgumentException& operator = (const BadArgumentException& other)
-      throw();
-    /// Destructor
-    virtual ~BadArgumentException() throw() = default;
+    /// Ping instruction
+    static constexpr uint8_t PING = 0x01;
+    /// Read data instruction
+    static constexpr uint8_t READ_DATA = 0x02;
+    /// Write data instruction
+    static constexpr uint8_t WRITE_DATA = 0x03;
+    /// Register write instruction
+    static constexpr uint8_t REG_WRITE = 0x04;
+    /// Action instruction
+    static constexpr uint8_t ACTION = 0x05;
+    /// Reset instruction
+    static constexpr uint8_t RESET = 0x06;
+    /// Synchronous write instruction
+    static constexpr uint8_t SYNC_WRITE = 0x07;
     /** @}
       */
-
-  protected:
 
   };
 
 }
 
-#include "exceptions/BadArgumentException.tpp"
-
-#endif // LIBDYNAMIXEL_EXCEPTIONS_BAD_ARGUMENT_EXCEPTION_H
+#endif // LIBDYNAMIXEL_SENSOR_INSTRUCTIONS_H

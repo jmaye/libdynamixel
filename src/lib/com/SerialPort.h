@@ -32,7 +32,7 @@ namespace dynamixel {
       \brief Serial communication interface.
     */
   class SerialPort {
-    public:
+  public:
     /** \name Types definitions
       @{
       */
@@ -64,7 +64,7 @@ namespace dynamixel {
     /// Constructs the serial port from parameters
     SerialPort(const std::string& device = "/dev/ttyUSB0", unsigned int
       baudRate = 115200, size_t dataBits = 8, size_t stopBits = 1, SerialParity
-      parity = none, FlowControl flowControl = no, double timeout = 2.0);
+      parity = none, FlowControl flowControl = no, double timeout = 0.1);
     /// Copy constructor
     SerialPort(const SerialPort& other) = delete;
     /// Copy assignment operator

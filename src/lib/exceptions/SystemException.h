@@ -49,7 +49,7 @@ namespace dynamixel {
     /// Assignment operator
     SystemException& operator = (const SystemException& other) throw();
     /// Destructor
-    virtual ~SystemException() throw ();
+    virtual ~SystemException() throw () = default;
     /** @}
       */
 

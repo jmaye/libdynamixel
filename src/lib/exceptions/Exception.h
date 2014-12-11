@@ -48,7 +48,7 @@ namespace dynamixel {
     /// Assignment operator
     Exception& operator = (const Exception& other) throw();
     /// Destructor
-    virtual ~Exception() throw ();
+    virtual ~Exception() throw () = default;
     /** @}
       */
 

@@ -44,7 +44,4 @@ namespace dynamixel {
     return *this;
   }
 
-  SystemException::~SystemException() throw() {
-  }
-
 }

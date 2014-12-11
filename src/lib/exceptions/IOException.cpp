@@ -40,7 +40,4 @@ namespace dynamixel {
     return *this;
   }
 
-  IOException::~IOException() throw() {
-  }
-
 }

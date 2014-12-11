@@ -49,8 +49,4 @@ namespace dynamixel {
     return *this;
   }
 
-  template <typename X>
-  BadArgumentException<X>::~BadArgumentException() throw() {
-  }
-
 }

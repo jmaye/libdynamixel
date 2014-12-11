@@ -16,58 +16,62 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  ******************************************************************************/
 
-#include "exceptions/Exception.h"
-
-#include <sstream>
+#include "com/BinaryReader.h"
 
 namespace dynamixel {
 
 /******************************************************************************/
-/* Constructors and Destructor                                                */
+/* Methods                                                                    */
 /******************************************************************************/
 
-  Exception::Exception(const std::string& msg, const std::string& filename,
-      size_t line, const std::string& function) :
-      msg_(msg),
-      filename_(filename),
-      function_(function),
-      line_(line) {
-    std::stringstream stream;
-    if (function != " ")
-      stream << function << ": ";
-    stream << msg;
-    if (filename != " ")
-      stream << " [file = " << filename << "]";
-    if (line)
-      stream << "[line = " << line << "]";
-    outputMessage_ = stream.str();
-  }
-
-  Exception::Exception(const Exception& other) throw() :
-      msg_(other.msg_),
-      filename_(other.filename_),
-      function_(other.function_),
-      line_(other.line_),
-      outputMessage_(other.outputMessage_) {
-  }
-
-  Exception& Exception::operator = (const Exception& other) throw() {
-    if (this != &other) {
-      msg_ = other.msg_;
-      filename_ = other.filename_;
-      function_ = other.function_;
-      line_ = other.line_;
-      outputMessage_ = other.outputMessage_;
-    }
+  BinaryReader& BinaryReader::operator >> (int8_t& value) {
+    read(reinterpret_cast<char*>(&value), sizeof(value));
     return *this;
   }
 
-/******************************************************************************/
-/* Accessors                                                                  */
-/******************************************************************************/
+  BinaryReader& BinaryReader::operator >> (uint8_t& value) {
+    read(reinterpret_cast<char*>(&value), sizeof(value));
+    return *this;
+  }
 
-  const char* Exception::what() const throw() {
-    return outputMessage_.c_str();
+  BinaryReader& BinaryReader::operator >> (int16_t& value) {
+    read(reinterpret_cast<char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryReader& BinaryReader::operator >> (uint16_t& value) {
+    read(reinterpret_cast<char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryReader& BinaryReader::operator >> (int32_t& value) {
+    read(reinterpret_cast<char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryReader& BinaryReader::operator >> (uint32_t& value) {
+    read(reinterpret_cast<char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryReader& BinaryReader::operator >> (int64_t& value) {
+    read(reinterpret_cast<char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryReader& BinaryReader::operator >> (uint64_t& value) {
+    read(reinterpret_cast<char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryReader& BinaryReader::operator >> (float& value) {
+    read(reinterpret_cast<char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryReader& BinaryReader::operator >> (double& value) {
+    read(reinterpret_cast<char*>(&value), sizeof(value));
+    return *this;
   }
 
 }

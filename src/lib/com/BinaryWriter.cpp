@@ -16,58 +16,62 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  ******************************************************************************/
 
-#include "exceptions/Exception.h"
-
-#include <sstream>
+#include "com/BinaryWriter.h"
 
 namespace dynamixel {
 
 /******************************************************************************/
-/* Constructors and Destructor                                                */
+/* Methods                                                                    */
 /******************************************************************************/
 
-  Exception::Exception(const std::string& msg, const std::string& filename,
-      size_t line, const std::string& function) :
-      msg_(msg),
-      filename_(filename),
-      function_(function),
-      line_(line) {
-    std::stringstream stream;
-    if (function != " ")
-      stream << function << ": ";
-    stream << msg;
-    if (filename != " ")
-      stream << " [file = " << filename << "]";
-    if (line)
-      stream << "[line = " << line << "]";
-    outputMessage_ = stream.str();
-  }
-
-  Exception::Exception(const Exception& other) throw() :
-      msg_(other.msg_),
-      filename_(other.filename_),
-      function_(other.function_),
-      line_(other.line_),
-      outputMessage_(other.outputMessage_) {
-  }
-
-  Exception& Exception::operator = (const Exception& other) throw() {
-    if (this != &other) {
-      msg_ = other.msg_;
-      filename_ = other.filename_;
-      function_ = other.function_;
-      line_ = other.line_;
-      outputMessage_ = other.outputMessage_;
-    }
+  BinaryWriter& BinaryWriter::operator << (int8_t value) {
+    write(reinterpret_cast<const char*>(&value), sizeof(value));
     return *this;
   }
 
-/******************************************************************************/
-/* Accessors                                                                  */
-/******************************************************************************/
+  BinaryWriter& BinaryWriter::operator << (uint8_t value) {
+    write(reinterpret_cast<const char*>(&value), sizeof(value));
+    return *this;
+  }
 
-  const char* Exception::what() const throw() {
-    return outputMessage_.c_str();
+  BinaryWriter& BinaryWriter::operator << (int16_t value) {
+    write(reinterpret_cast<const char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryWriter& BinaryWriter::operator << (uint16_t value) {
+    write(reinterpret_cast<const char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryWriter& BinaryWriter::operator << (int32_t value) {
+    write(reinterpret_cast<const char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryWriter& BinaryWriter::operator << (uint32_t value) {
+    write(reinterpret_cast<const char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryWriter& BinaryWriter::operator << (int64_t value) {
+    write(reinterpret_cast<const char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryWriter& BinaryWriter::operator << (uint64_t value) {
+    write(reinterpret_cast<const char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryWriter& BinaryWriter::operator << (float value) {
+    write(reinterpret_cast<const char*>(&value), sizeof(value));
+    return *this;
+  }
+
+  BinaryWriter& BinaryWriter::operator << (double value) {
+    write(reinterpret_cast<const char*>(&value), sizeof(value));
+    return *this;
   }
 
 }
