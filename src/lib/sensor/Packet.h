@@ -17,7 +17,7 @@
  ******************************************************************************/
 
 /** \file Packet.h
-    \brief This file defines the Packet class which represents a packet 
+    \brief This file defines the Packet class which represents a packet
            transmitted/received to/from a Dynamixel device.
   */
 
@@ -34,7 +34,8 @@ namespace dynamixel {
   class BinaryWriter;
 
   /** The class Packet represents a packet transmitted/received to/from a
-      Dynamixel device.
+      Dynamixel device. The packet format is not compatible with the models
+      XL-320 and Dynamixel Pro.
       \brief Dynamixel packet.
     */
   class Packet {

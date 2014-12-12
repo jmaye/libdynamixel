@@ -55,6 +55,8 @@ namespace dynamixel {
     static constexpr uint8_t CCWAngleLimitLow = 0x08;
     /// Highest byte of counterclockwise Angle Limit (RW)
     static constexpr uint8_t CCWAngleLimitHigh = 0x09;
+    /// Drive Mode (RW): EX-106+, MX-106
+    static constexpr uint8_t driveMode = 0x0A;
     /// Internal Limit Temperature (RW)
     static constexpr uint8_t highestLimitTemperature = 0x0B;
     /// Lowest Limit Voltage (RW)
@@ -71,11 +73,11 @@ namespace dynamixel {
     static constexpr uint8_t alarmLED = 0x11;
     /// Shutdown for Alarm (RW)
     static constexpr uint8_t alarmShutdown = 0x12;
-    /// Multi-turn offset least significant byte (RW)
+    /// Multi-turn offset least significant byte (RW): MX series
     static constexpr uint8_t multiTurnOffsetLow = 0x14;
-    /// Multi-turn offset most significant byte (RW)
+    /// Multi-turn offset most significant byte (RW): MX series
     static constexpr uint8_t multiTurnOffsetHigh = 0x15;
-    /// Resolution divider (RW)
+    /// Resolution divider (RW): MX series
     static constexpr uint8_t resolutionDivider = 0x16;
     /** @}
       */
@@ -87,12 +89,20 @@ namespace dynamixel {
     static constexpr uint8_t torqueEnable = 0x18;
     /// LED On/Off (RW)
     static constexpr uint8_t led = 0x19;
-    /// Derivative Gain (RW)
+    /// Derivative Gain (RW): MX series
     static constexpr uint8_t dGain = 0x1A;
-    /// Integral Gain (RW)
+    /// Clockwise Compliance Margin (RW): EX/RX/AX/DX series
+    static constexpr uint8_t cwComplianceMargin = 0x1A;
+    /// Integral Gain (RW): MX series
     static constexpr uint8_t iGain = 0x1B;
-    /// Proportional Gain (RW)
+    /// Counterclockwise Compliance Margin (RW): EX/RX/AX/DX series
+    static constexpr uint8_t ccwComplianceMargin = 0x1B;
+    /// Proportional Gain (RW): MX series
     static constexpr uint8_t pGain = 0x1C;
+    /// Clockwise Compliance Slope (RW): EX/RX/AX/DX series
+    static constexpr uint8_t cwComplianceSlope = 0x1C;
+    /// Counterclockwise Compliance Slope (RW): EX/RX/AX/DX series
+    static constexpr uint8_t ccwComplianceSlope = 0x1D;
     /// Lowest byte of Goal Position (RW)
     static constexpr uint8_t goalPositionLow = 0x1E;
     /// Highest byte of Goal Position (RW)
@@ -131,17 +141,21 @@ namespace dynamixel {
     static constexpr uint8_t punchLow = 0x30;
     /// Highest byte of Punch (RW)
     static constexpr uint8_t punchHigh = 0x31;
-    /// Lowest byte of Consuming Current (RW)
+    /// Lowest byte of Consuming Current (R): EX-106+
+    static constexpr uint8_t sensedCurrentLow = 0x38;
+    /// Highest byte of Consuming Current (R): EX-106
+    static constexpr uint8_t sensedCurrentHigh = 0x39;
+    /// Lowest byte of Consuming Current (RW): MX-64, MX-106
     static constexpr uint8_t currentLow = 0x44;
-    /// Highest byte of Consuming Current (RW)
+    /// Highest byte of Consuming Current (RW): MX-64, MX-106
     static constexpr uint8_t currentHigh = 0x45;
-    /// Torque control mode on/off (RW)
+    /// Torque control mode on/off (RW): MX-64, MX-106
     static constexpr uint8_t torqueControlModeEnable = 0x46;
-    /// Lowest byte of goal torque value (RW)
+    /// Lowest byte of goal torque value (RW): MX-64, MX-106
     static constexpr uint8_t goalTorqueLow = 0x47;
-    /// Highest byte of goal torque value (RW)
+    /// Highest byte of goal torque value (RW): MX-64, MX-106
     static constexpr uint8_t goalTorqueHigh = 0x48;
-    /// Goal Acceleration (RW)
+    /// Goal Acceleration (RW): MX series
     static constexpr uint8_t goalAcceleration = 0x49;
     /** @}
       */
