@@ -40,7 +40,7 @@ namespace dynamixel {
 /******************************************************************************/
 
   SerialPort::SerialPort(const std::string& device, unsigned int baudRate,
-      size_t dataBits, size_t stopBits,  SerialParity parity, FlowControl
+      size_t dataBits, size_t stopBits, SerialParity parity, FlowControl
       flowControl, double timeout) :
       device_(device),
       baudRate_(baudRate),

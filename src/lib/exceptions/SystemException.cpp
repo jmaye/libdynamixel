@@ -28,7 +28,7 @@ namespace dynamixel {
 
   SystemException::SystemException(int errNo, const std::string& msg, const
       std::string& filename, size_t line, const std::string& function) :
-      Exception(msg + std::string(strerror(errNo)), filename, line,
+      Exception(msg + ": " + std::string(strerror(errNo)), filename, line,
       function) {
   }
 
