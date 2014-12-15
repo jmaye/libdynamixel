@@ -191,12 +191,22 @@ namespace dynamixel {
     /// Sets the goal position
     void setGoalPosition(uint8_t id, uint16_t position, bool
       registered = false);
+    /// Sets the goal position as an angle
+    void setGoalPositionAngle(uint8_t id, double angle, double range = 2 * M_PI,
+      uint16_t maxTicks = 4095, bool registered = false);
     /// Returns the moving speed
     uint16_t getMovingSpeed(uint8_t id);
     /// Returns the moving speed in rpm
     double getMovingSpeedRpm(uint8_t id, double rpmPerTick = 0.114);
     /// Sets the moving speed
     void setMovingSpeed(uint8_t id, uint16_t speed, bool registered = false);
+    /// Sets the goal position and the moving speed
+    void setGoalPositionAndSpeed(uint8_t id, uint16_t position, uint16_t speed,
+      bool registered = false);
+    /// Sets the goal position angle and the moving speed in rpm
+    void setGoalPositionAngleAndSpeedRpm(uint8_t id, double angle, double speed,
+       double range = 2 * M_PI, uint16_t maxTicks = 4095, double
+       rpmPerTick = 0.114, bool registered = false);
     /// Returns the torque limit
     uint16_t getTorqueLimit(uint8_t id);
     /// Returns the torque limit in percent
@@ -349,6 +359,10 @@ namespace dynamixel {
     /// Converts revolutions per minute to radians per second
     static double revPerMin2RadPerSec(double rpm) {
       return rpm / 60.0 * 2 * M_PI;
+    }
+    /// Converts radians per second to revolutions per minute
+    static double radPerSec2RevPerMin(double rps) {
+      return rps * 30 / M_PI;
     }
     /// Converts degree to radian
     static float deg2rad(float deg) {

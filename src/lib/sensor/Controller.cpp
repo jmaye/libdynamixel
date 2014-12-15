@@ -625,6 +625,11 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
   }
 
+  void Controller::setGoalPositionAngle(uint8_t id, double angle, double range,
+      uint16_t maxTicks, bool registered) {
+    setGoalPosition(id, std::round(angle / range * maxTicks), registered);
+  }
+
   uint16_t Controller::getMovingSpeed(uint8_t id) {
     auto status = readData(id, Addresses::movingSpeedLow, 2);
     if (status->getInstructionOrError())
@@ -647,6 +652,27 @@ namespace dynamixel {
     if (status->getInstructionOrError())
       throw IOException("Controller::setMovingSpeed(): \n" +
         getErrorString(status->getInstructionOrError()));
+  }
+
+  void Controller::setGoalPositionAndSpeed(uint8_t id, uint16_t position,
+      uint16_t speed, bool registered) {
+    std::vector<uint8_t> data;
+    data.push_back(reinterpret_cast<uint8_t*>(&position)[0]);
+    data.push_back(reinterpret_cast<uint8_t*>(&position)[1]);
+    data.push_back(reinterpret_cast<uint8_t*>(&speed)[0]);
+    data.push_back(reinterpret_cast<uint8_t*>(&speed)[1]);
+    auto status = registered ? regWriteData(id, Addresses::goalPositionLow,
+      data) : writeData(id, Addresses::goalPositionLow, data);
+    if (status->getInstructionOrError())
+      throw IOException("Controller::setGoalPositionAndSpeed(): \n" +
+        getErrorString(status->getInstructionOrError()));
+  }
+
+  void Controller::setGoalPositionAngleAndSpeedRpm(uint8_t id, double angle,
+      double speed, double range, uint16_t maxTicks, double rpmPerTick, bool
+      registered) {
+    setGoalPositionAndSpeed(id, std::round(angle / range * maxTicks),
+      std::round(speed / rpmPerTick), registered);
   }
 
   uint16_t Controller::getTorqueLimit(uint8_t id) {

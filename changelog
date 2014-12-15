@@ -1,3 +1,9 @@
+libdynamixel (0.1-7) trusty; urgency=low
+
+  * some more functions. 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Mon, 15 Dec 2014 10:21:06 +0100
+
 libdynamixel (0.1-6) trusty; urgency=low
 
   * Improvements (bis)
