@@ -39,27 +39,28 @@ int main(int argc, char **argv) {
   Controller controller(std::make_shared<SerialPort>(std::string(argv[1]),
     atoi(argv[2])));
   const auto id = atoi(argv[3]);
-  std::cout << "Model number: " << controller.getModelNumber(id) << std::endl;
-  controller.getModelInformation(controller.getModelNumber(id)).ostream(
-    std::cout);
+  const auto modelNumber = controller.getModelNumber(id);
+  std::cout << "Model number: " << modelNumber << std::endl;
+  controller.getModelInformation(modelNumber).ostream(std::cout);
   std::cout << "Firmware version: "
     << (unsigned)controller.getFirmwareVersion(id) << std::endl;
   std::cout << "Device ID: " << (unsigned)controller.getId(id) << std::endl;
   std::cout << "Baud rate: " << (unsigned)controller.getBaudRate(id)
     << std::endl;
-  std::cout << "Return delay time (us): " << controller.getReturnDelayTimeUs(id)
-    << std::endl;
+  std::cout << "Return delay time (us): "
+    << Controller::raw2us(controller.getReturnDelayTime(id)) << std::endl;
   std::cout << "Clockwise angle limit (rad): "
-    << controller.getCwAngleLimitAngle(id) << std::endl;
-  std::cout << "Counter-clockwise angle limit (rad): "
-    << controller.getCcwAngleLimitAngle(id) << std::endl;
+    << Controller::tick2angle(controller.getCwAngleLimit(id)) << std::endl;
+  std::cout << "Counterclockwise angle limit (rad): "
+    << Controller::tick2angle(controller.getCcwAngleLimit(id)) << std::endl;
   std::cout << "Highest limit temperature (C): "
     << (unsigned)controller.getHighestLimitTemperature(id) << std::endl;
   std::cout << "Highest limit voltage (V): "
-    << controller.getHighestLimitVoltageVolt(id) << std::endl;
+    << Controller::raw2volt(controller.getHighestLimitVoltage(id)) << std::endl;
   std::cout << "Lowest limit voltage (V): "
-    << controller.getLowestLimitVoltageVolt(id) << std::endl;
-  std::cout << "Maximum torque (%): " << controller.getMaxTorquePercent(id)
+    << Controller::raw2volt(controller.getLowestLimitVoltage(id)) << std::endl;
+  std::cout << "Maximum torque (%): "
+    << Controller::raw2torqueRatio(controller.getMaxTorque(id)) * 100.0
     << std::endl;
   std::cout << "Status return level: "
     << (unsigned)controller.getStatusReturnLevel(id) << std::endl;
@@ -67,10 +68,12 @@ int main(int argc, char **argv) {
     << std::endl;
   std::cout << "Alarm shutdown: " << (unsigned)controller.getAlarmShutdown(id)
     << std::endl;
-  std::cout << "Multi-turn offset: " << controller.getMultiTurnOffset(id)
-    << std::endl;
-  std::cout << "Resolution divider: "
-    << (unsigned)controller.getResolutionDivider(id) << std::endl;
+  if (Controller::isModelMX(modelNumber)) {
+    std::cout << "Multi-turn offset: " << controller.getMultiTurnOffset(id)
+      << std::endl;
+    std::cout << "Resolution divider: "
+      << (unsigned)controller.getResolutionDivider(id) << std::endl;
+  }
   std::cout << "Torque enable: " << (unsigned)controller.isTorqueEnable(id)
     << std::endl;
   std::cout << "LED: " << (unsigned)controller.isLed(id) << std::endl;
@@ -79,25 +82,42 @@ int main(int argc, char **argv) {
   else
     controller.setLed(id, true, true);
   controller.action(id);
-  std::cout << "D gain: " << controller.getDGainK(id) << std::endl;
-  std::cout << "I gain: " << controller.getIGainK(id) << std::endl;
-  std::cout << "P gain: " << controller.getPGainK(id) << std::endl;
-  std::cout << "Goal position (rad): " << controller.getGoalPositionAngle(id)
-    << std::endl;
+  if (Controller::isModelMX(modelNumber)) {
+    std::cout << "D gain: " << Controller::raw2Kd(controller.getDGain(id))
+      << std::endl;
+    std::cout << "I gain: " << Controller::raw2Ki(controller.getIGain(id))
+      << std::endl;
+    std::cout << "P gain: " << Controller::raw2Kp(controller.getPGain(id))
+      << std::endl;
+  }
+  else {
+    std::cout << "Clockwise compliance margin: "
+      << controller.getCwComplianceMargin(id) << std::endl;
+    std::cout << "Counterclockwise compliance margin: "
+      << controller.getCcwComplianceMargin(id) << std::endl;
+    std::cout << "Clockwise compliance slope: "
+      << controller.getCwComplianceSlope(id) << std::endl;
+    std::cout << "Counterclockwise compliance slope: "
+      << controller.getCcwComplianceSlope(id) << std::endl;
+  }
+  std::cout << "Goal position (rad): "
+    << Controller::tick2angle(controller.getGoalPosition(id)) << std::endl;
   std::cout << "Moving speed (rad/s): "
-    << Controller::revPerMin2RadPerSec(controller.getMovingSpeedRpm(id))
+    << Controller::rpm2rps(Controller::raw2rpm(controller.getMovingSpeed(id)))
     << std::endl;
-  std::cout << "Torque limit (%): " << controller.getTorqueLimitPercent(id)
+  std::cout << "Torque limit (%): "
+    << Controller::raw2torqueRatio(controller.getTorqueLimit(id)) * 100.0
     << std::endl;
   std::cout << "Present position (rad): "
-    << controller.getPresentPositionAngle(id) << std::endl;
+    << Controller::tick2angle(controller.getPresentPosition(id)) << std::endl;
   std::cout << "Present speed (rad/s): "
-    << Controller::revPerMin2RadPerSec(controller.getPresentSpeedRpm(id))
+    << Controller::rpm2rps(Controller::raw2rpm(controller.getPresentSpeed(id)))
     << std::endl;
-  std::cout << "Present load (%): " << controller.getPresentLoadPercent(id)
+  std::cout << "Present load (%): "
+    << Controller::raw2torqueRatio(controller.getPresentLoad(id)) * 100.0
     << std::endl;
-  std::cout << "Present voltage (V): " << controller.getPresentVoltageVolt(id)
-    << std::endl;
+  std::cout << "Present voltage (V): "
+    << Controller::raw2volt(controller.getPresentVoltage(id)) << std::endl;
   std::cout << "Present temperature (C): "
     << (unsigned)controller.getPresentTemperature(id) << std::endl;
   std::cout << "Instruction registered: "
@@ -106,14 +126,18 @@ int main(int argc, char **argv) {
   std::cout << "EEPROM lock: " << (unsigned)controller.isEEPROMLock(id)
     << std::endl;
   std::cout << "Punch: " << controller.getPunch(id) << std::endl;
-  std::cout << "Current (A): " << controller.getCurrentAmp(id) << std::endl;
-  std::cout << "Torque control mode enable: "
-    << (unsigned)controller.isTorqueControlModeEnable(id) << std::endl;
-  std::cout << "Goal torque (A): " << controller.getGoalTorqueAmp(id)
+  std::cout << "Current (A): " << Controller::raw2amp(controller.getCurrent(id))
     << std::endl;
-  std::cout << "Goal acceleration (rad/sec^2): "
-    << controller.getGoalAccelerationRadSec2(id) << std::endl;
-  controller.setMovingSpeed(1, 0);
+  if (Controller::isModelTorqueControl(modelNumber)) {
+    std::cout << "Torque control mode enable: "
+      << (unsigned)controller.isTorqueControlModeEnable(id) << std::endl;
+    std::cout << "Goal torque (A): "
+      << Controller::rawtorque2amp(controller.getGoalTorque(id)) << std::endl;
+  }
+  if (Controller::isModelMX(modelNumber))
+    std::cout << "Goal acceleration (rad/sec^2): "
+      << Controller::raw2rps2(controller.getGoalAcceleration(id)) << std::endl;
+  controller.setMovingSpeed(1, 1);
   controller.setGoalPosition(1, 0);
   return 0;
 }

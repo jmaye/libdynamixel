@@ -245,10 +245,6 @@ namespace dynamixel {
     return status->getParameters()[0];
   }
 
-  uint16_t Controller::getReturnDelayTimeUs(uint8_t id) {
-    return getReturnDelayTime(id) * 2;
-  }
-
   void Controller::setReturnDelayTime(uint8_t id, uint8_t returnDelayTime, bool
       registered) {
     std::vector<uint8_t> data;
@@ -267,11 +263,6 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
     return static_cast<uint16_t>(status->getParameters()[1]) << 8 |
       static_cast<uint16_t>(status->getParameters()[0]);
-  }
-
-  double Controller::getCwAngleLimitAngle(uint8_t id, double range, uint16_t
-      maxTicks) {
-    return getCwAngleLimit(id) / static_cast<double>(maxTicks) * range;
   }
 
   void Controller::setCwAngleLimit(uint8_t id, uint16_t cwAngleLimit, bool
@@ -293,11 +284,6 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
     return static_cast<uint16_t>(status->getParameters()[1]) << 8 |
       static_cast<uint16_t>(status->getParameters()[0]);
-  }
-
-  double Controller::getCcwAngleLimitAngle(uint8_t id, double range, uint16_t
-      maxTicks) {
-    return getCcwAngleLimit(id) / static_cast<double>(maxTicks) * range;
   }
 
   void Controller::setCcwAngleLimit(uint8_t id, uint16_t ccwAngleLimit, bool
@@ -340,10 +326,6 @@ namespace dynamixel {
     return status->getParameters()[0];
   }
 
-  double Controller::getHighestLimitVoltageVolt(uint8_t id) {
-    return getHighestLimitVoltage(id) * 0.1;
-  }
-
   void Controller::setHighestLimitVoltage(uint8_t id, uint8_t voltage, bool
       registered) {
     std::vector<uint8_t> data;
@@ -361,10 +343,6 @@ namespace dynamixel {
       throw IOException("Controller::getLowestLimitVoltage(): \n" +
         getErrorString(status->getInstructionOrError()));
     return status->getParameters()[0];
-  }
-
-  double Controller::getLowestLimitVoltageVolt(uint8_t id) {
-    return getLowestLimitVoltage(id) * 0.1;
   }
 
   void Controller::setLowestLimitVoltage(uint8_t id, uint8_t voltage, bool
@@ -385,10 +363,6 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
     return static_cast<uint16_t>(status->getParameters()[1]) << 8 |
       static_cast<uint16_t>(status->getParameters()[0]);
-  }
-
-  double Controller::getMaxTorquePercent(uint8_t id) {
-    return getMaxTorque(id) / 1023.0 * 100.0;
   }
 
   void Controller::setMaxTorque(uint8_t id, uint16_t torque, bool registered) {
@@ -541,10 +515,6 @@ namespace dynamixel {
     return status->getParameters()[0];
   }
 
-  double Controller::getDGainK(uint8_t id) {
-    return getDGain(id) * 4.0 / 1000.0;
-  }
-
   void Controller::setDGain(uint8_t id, uint8_t gain, bool registered) {
     std::vector<uint8_t> data;
     data.push_back(gain);
@@ -561,10 +531,6 @@ namespace dynamixel {
       throw IOException("Controller::getIGain(): \n" +
         getErrorString(status->getInstructionOrError()));
     return status->getParameters()[0];
-  }
-
-  double Controller::getIGainK(uint8_t id) {
-    return getIGain(id) * 1000.0 / 2048.0;
   }
 
   void Controller::setIGain(uint8_t id, uint8_t gain, bool registered) {
@@ -585,10 +551,6 @@ namespace dynamixel {
     return status->getParameters()[0];
   }
 
-  double Controller::getPGainK(uint8_t id) {
-    return getPGain(id) / 8.0;
-  }
-
   void Controller::setPGain(uint8_t id, uint8_t gain, bool registered) {
     std::vector<uint8_t> data;
     data.push_back(gain);
@@ -599,6 +561,30 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
   }
 
+  void Controller::getPIDGains(uint8_t id, uint8_t& pGain, uint8_t& iGain,
+      uint8_t& dGain) {
+    auto status = readData(id, Addresses::dGain, 3);
+    if (status->getInstructionOrError())
+      throw IOException("Controller::getPIDGains(): \n" +
+        getErrorString(status->getInstructionOrError()));
+    dGain = status->getParameters()[0];
+    iGain = status->getParameters()[1];
+    pGain = status->getParameters()[2];
+  }
+
+  void Controller::setPIDGains(uint8_t id, uint8_t pGain, uint8_t iGain, uint8_t
+      dGain, bool registered) {
+    std::vector<uint8_t> data;
+    data.push_back(dGain);
+    data.push_back(iGain);
+    data.push_back(pGain);
+    auto status = registered ? regWriteData(id, Addresses::dGain, data) :
+      writeData(id, Addresses::dGain, data);
+    if (status->getInstructionOrError())
+      throw IOException("Controller::setPIDGains(): \n" +
+        getErrorString(status->getInstructionOrError()));
+  }
+
   uint16_t Controller::getGoalPosition(uint8_t id) {
     auto status = readData(id, Addresses::goalPositionLow, 2);
     if (status->getInstructionOrError())
@@ -606,11 +592,6 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
     return static_cast<uint16_t>(status->getParameters()[1]) << 8 |
       static_cast<uint16_t>(status->getParameters()[0]);
-  }
-
-  double Controller::getGoalPositionAngle(uint8_t id, double range, uint16_t
-      maxTicks) {
-    return getGoalPosition(id) / static_cast<double>(maxTicks) * range;
   }
 
   void Controller::setGoalPosition(uint8_t id, uint16_t position, bool
@@ -625,11 +606,6 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
   }
 
-  void Controller::setGoalPositionAngle(uint8_t id, double angle, double range,
-      uint16_t maxTicks, bool registered) {
-    setGoalPosition(id, std::round(angle / range * maxTicks), registered);
-  }
-
   uint16_t Controller::getMovingSpeed(uint8_t id) {
     auto status = readData(id, Addresses::movingSpeedLow, 2);
     if (status->getInstructionOrError())
@@ -637,10 +613,6 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
     return static_cast<uint16_t>(status->getParameters()[1]) << 8 |
       static_cast<uint16_t>(status->getParameters()[0]);
-  }
-
-  double Controller::getMovingSpeedRpm(uint8_t id, double rpmPerTick) {
-    return getMovingSpeed(id) * rpmPerTick;
   }
 
   void Controller::setMovingSpeed(uint8_t id, uint16_t speed, bool registered) {
@@ -654,8 +626,20 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
   }
 
-  void Controller::setGoalPositionAndSpeed(uint8_t id, uint16_t position,
-      uint16_t speed, bool registered) {
+  void Controller::getGoalPositionSpeed(uint8_t id, uint16_t& position,
+      uint16_t& speed) {
+    auto status = readData(id, Addresses::goalPositionLow, 4);
+    if (status->getInstructionOrError())
+      throw IOException("Controller::getGoalPositionSpeed(): \n" +
+        getErrorString(status->getInstructionOrError()));
+    position = static_cast<uint16_t>(status->getParameters()[1]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[0]);
+    speed = static_cast<uint16_t>(status->getParameters()[3]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[2]);
+  }
+
+  void Controller::setGoalPositionSpeed(uint8_t id, uint16_t position, uint16_t
+      speed, bool registered) {
     std::vector<uint8_t> data;
     data.push_back(reinterpret_cast<uint8_t*>(&position)[0]);
     data.push_back(reinterpret_cast<uint8_t*>(&position)[1]);
@@ -664,15 +648,8 @@ namespace dynamixel {
     auto status = registered ? regWriteData(id, Addresses::goalPositionLow,
       data) : writeData(id, Addresses::goalPositionLow, data);
     if (status->getInstructionOrError())
-      throw IOException("Controller::setGoalPositionAndSpeed(): \n" +
+      throw IOException("Controller::setGoalPositionSpeed(): \n" +
         getErrorString(status->getInstructionOrError()));
-  }
-
-  void Controller::setGoalPositionAngleAndSpeedRpm(uint8_t id, double angle,
-      double speed, double range, uint16_t maxTicks, double rpmPerTick, bool
-      registered) {
-    setGoalPositionAndSpeed(id, std::round(angle / range * maxTicks),
-      std::round(speed / rpmPerTick), registered);
   }
 
   uint16_t Controller::getTorqueLimit(uint8_t id) {
@@ -682,10 +659,6 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
     return static_cast<uint16_t>(status->getParameters()[1]) << 8 |
       static_cast<uint16_t>(status->getParameters()[0]);
-  }
-
-  double Controller::getTorqueLimitPercent(uint8_t id) {
-    return getTorqueLimit(id) / 1023.0 * 100.0;
   }
 
   void Controller::setTorqueLimit(uint8_t id, uint16_t torque, bool
@@ -700,6 +673,36 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
   }
 
+  void Controller::getGoalPositionSpeedTorque(uint8_t id, uint16_t& position,
+      uint16_t& speed, uint16_t& torque) {
+    auto status = readData(id, Addresses::goalPositionLow, 6);
+    if (status->getInstructionOrError())
+      throw IOException("Controller::getGoalPositionSpeedTorque(): \n" +
+        getErrorString(status->getInstructionOrError()));
+    position = static_cast<uint16_t>(status->getParameters()[1]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[0]);
+    speed = static_cast<uint16_t>(status->getParameters()[3]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[2]);
+    torque = static_cast<uint16_t>(status->getParameters()[5]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[4]);
+  }
+
+  void Controller::setGoalPositionSpeedTorque(uint8_t id, uint16_t position,
+      uint16_t speed, uint16_t torque, bool registered) {
+    std::vector<uint8_t> data;
+    data.push_back(reinterpret_cast<uint8_t*>(&position)[0]);
+    data.push_back(reinterpret_cast<uint8_t*>(&position)[1]);
+    data.push_back(reinterpret_cast<uint8_t*>(&speed)[0]);
+    data.push_back(reinterpret_cast<uint8_t*>(&speed)[1]);
+    data.push_back(reinterpret_cast<uint8_t*>(&torque)[0]);
+    data.push_back(reinterpret_cast<uint8_t*>(&torque)[1]);
+    auto status = registered ? regWriteData(id, Addresses::goalPositionLow,
+      data) : writeData(id, Addresses::goalPositionLow, data);
+    if (status->getInstructionOrError())
+      throw IOException("Controller::setGoalPositionSpeedTorque(): \n" +
+        getErrorString(status->getInstructionOrError()));
+  }
+
   uint16_t Controller::getPresentPosition(uint8_t id) {
     auto status = readData(id, Addresses::presentPositionLow, 2);
     if (status->getInstructionOrError())
@@ -707,11 +710,6 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
     return static_cast<uint16_t>(status->getParameters()[1]) << 8 |
       static_cast<uint16_t>(status->getParameters()[0]);
-  }
-
-  double Controller::getPresentPositionAngle(uint8_t id, double range, uint16_t
-      maxTicks) {
-    return getPresentPosition(id) / static_cast<double>(maxTicks) * range;
   }
 
   uint16_t Controller::getPresentSpeed(uint8_t id) {
@@ -723,14 +721,6 @@ namespace dynamixel {
       static_cast<uint16_t>(status->getParameters()[0]);
   }
 
-  double Controller::getPresentSpeedRpm(uint8_t id, double rpmPerTick) {
-    const auto speed = getPresentSpeed(id);
-    const auto speedMasked = speed & 0x03FF;
-    const auto direction = speed & 0x0400;
-    return direction ? speedMasked * rpmPerTick * -1.0 : speedMasked *
-      rpmPerTick;
-  }
-
   uint16_t Controller::getPresentLoad(uint8_t id) {
     auto status = readData(id, Addresses::presentLoadLow, 2);
     if (status->getInstructionOrError())
@@ -740,12 +730,18 @@ namespace dynamixel {
       static_cast<uint16_t>(status->getParameters()[0]);
   }
 
-  double Controller::getPresentLoadPercent(uint8_t id) {
-    const auto load = getPresentLoad(id);
-    const auto loadMasked = load & 0x03FF;
-    const auto direction = load & 0x0400;
-    return direction ? loadMasked / 1023.0 * -100.0 : loadMasked / 1023.0
-      * 100.0;
+  void Controller::getPresentPositionSpeedLoad(uint8_t id, uint16_t& position,
+      uint16_t& speed, uint16_t& load) {
+    auto status = readData(id, Addresses::presentPositionLow, 6);
+    if (status->getInstructionOrError())
+      throw IOException("Controller::getPresentPositionSpeedLoad(): \n" +
+        getErrorString(status->getInstructionOrError()));
+    position = static_cast<uint16_t>(status->getParameters()[1]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[0]);
+    speed = static_cast<uint16_t>(status->getParameters()[3]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[2]);
+    load = static_cast<uint16_t>(status->getParameters()[5]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[4]);
   }
 
   uint8_t Controller::getPresentVoltage(uint8_t id) {
@@ -754,10 +750,6 @@ namespace dynamixel {
       throw IOException("Controller::getPresentVoltage(): \n" +
         getErrorString(status->getInstructionOrError()));
     return status->getParameters()[0];
-  }
-
-  double Controller::getPresentVoltageVolt(uint8_t id) {
-    return getPresentVoltage(id) * 0.1;
   }
 
   uint8_t Controller::getPresentTemperature(uint8_t id) {
@@ -782,6 +774,25 @@ namespace dynamixel {
       throw IOException("Controller::isMoving(): \n" +
         getErrorString(status->getInstructionOrError()));
     return status->getParameters()[0] ? true : false;
+  }
+
+  void Controller::getState(uint8_t id, uint16_t& position, uint16_t& speed,
+      uint16_t& load, uint8_t& voltage, uint8_t& temperature, bool& registered,
+      bool& moving) {
+    auto status = readData(id, Addresses::presentPositionLow, 10);
+    if (status->getInstructionOrError())
+      throw IOException("Controller::getState(): \n" +
+        getErrorString(status->getInstructionOrError()));
+    position = static_cast<uint16_t>(status->getParameters()[1]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[0]);
+    speed = static_cast<uint16_t>(status->getParameters()[3]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[2]);
+    load = static_cast<uint16_t>(status->getParameters()[5]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[4]);
+    voltage = status->getParameters()[6];
+    temperature = status->getParameters()[7];
+    registered = status->getParameters()[8] ? true : false;
+    moving = status->getParameters()[9] ? true : false;
   }
 
   bool Controller::isEEPROMLock(uint8_t id) {
@@ -831,10 +842,6 @@ namespace dynamixel {
       static_cast<uint16_t>(status->getParameters()[0]);
   }
 
-  double Controller::getCurrentAmp(uint8_t id) {
-    return 4.5 * (getCurrent(id) - 2048.0);
-  }
-
   bool Controller::isTorqueControlModeEnable(uint8_t id) {
     auto status = readData(id, Addresses::torqueControlModeEnable, 1);
     if (status->getInstructionOrError())
@@ -864,13 +871,6 @@ namespace dynamixel {
       static_cast<uint16_t>(status->getParameters()[0]);
   }
 
-  double Controller::getGoalTorqueAmp(uint8_t id) {
-    const auto torque = getGoalTorque(id);
-    const auto torqueMasked = torque & 0x03FF;
-    const auto direction = torque & 0x0400;
-    return (direction ? torqueMasked -4.5 : torqueMasked * 4.5) * 0.001;
-  }
-
   void Controller::setGoalTorque(uint8_t id, uint16_t torque, bool registered) {
     std::vector<uint8_t> data;
     data.push_back(reinterpret_cast<uint8_t*>(&torque)[0]);
@@ -888,10 +888,6 @@ namespace dynamixel {
       throw IOException("Controller::getGoalAcceleration(): \n" +
         getErrorString(status->getInstructionOrError()));
     return status->getParameters()[0];
-  }
-
-  double Controller::getGoalAccelerationRadSec2(uint8_t id) {
-    return getGoalAcceleration(id) / 254.0 * 2180.0 * M_PI / 180.0;
   }
 
   void Controller::setGoalAcceleration(uint8_t id, uint8_t acceleration, bool
@@ -981,6 +977,34 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
   }
 
+  void Controller::getCompliance(uint8_t id, uint8_t& cwComplianceMargin,
+      uint8_t& ccwComplianceMargin, uint8_t& cwComplianceSlope, uint8_t&
+      ccwComplianceSlope) {
+    auto status = readData(id, Addresses::cwComplianceMargin, 4);
+    if (status->getInstructionOrError())
+      throw IOException("Controller::getCompliance(): \n" +
+        getErrorString(status->getInstructionOrError()));
+    cwComplianceMargin = status->getParameters()[0];
+    ccwComplianceMargin = status->getParameters()[1];
+    cwComplianceSlope = status->getParameters()[2];
+    ccwComplianceSlope = status->getParameters()[3];
+  }
+
+  void Controller::setCompliance(uint8_t id, uint8_t cwComplianceMargin, uint8_t
+      ccwComplianceMargin, uint8_t cwComplianceSlope, uint8_t
+      ccwComplianceSlope, bool registered) {
+    std::vector<uint8_t> data;
+    data.push_back(cwComplianceMargin);
+    data.push_back(ccwComplianceMargin);
+    data.push_back(cwComplianceSlope);
+    data.push_back(ccwComplianceSlope);
+    auto status = registered ? regWriteData(id, Addresses::cwComplianceMargin,
+      data) : writeData(id, Addresses::cwComplianceMargin, data);
+    if (status->getInstructionOrError())
+      throw IOException("Controller::setCompliance(): \n" +
+        getErrorString(status->getInstructionOrError()));
+  }
+
   uint8_t Controller::getDriveMode(uint8_t id) {
     auto status = readData(id, Addresses::driveMode, 1);
     if (status->getInstructionOrError())
@@ -1038,7 +1062,7 @@ namespace dynamixel {
     return errorStringStream.str();
   }
 
-  Model Controller::getModelInformation(uint8_t modelNumber) {
+  Model Controller::getModelInformation(uint16_t modelNumber) {
     if (isModelSupported(modelNumber))
       return Models::table.at(modelNumber);
     else

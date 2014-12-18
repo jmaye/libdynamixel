@@ -1,3 +1,9 @@
+libdynamixel (0.1-9) trusty; urgency=low
+
+  * Adding new functionalities
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Thu, 18 Dec 2014 11:28:24 +0100
+
 libdynamixel (0.1-8) trusty; urgency=low
 
   * typesetting 

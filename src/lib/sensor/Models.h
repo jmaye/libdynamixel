@@ -28,6 +28,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <vector>
 #include <iostream>
 
 namespace dynamixel {
@@ -58,7 +59,7 @@ namespace dynamixel {
     */
   namespace Models {
     /// Model table
-    static const std::unordered_map<uint8_t, Model> table {
+    static const std::unordered_map<uint16_t, Model> table {
       {0x0140, Model{"MX-106", 4095, 360.0, 0.114}},
       {0x0136, Model{"MX-64", 4095, 360.0, 0.114}},
       {0x001D, Model{"MX-28", 4095, 360.0, 0.114}},
@@ -74,6 +75,14 @@ namespace dynamixel {
       {0x0075, Model{"DX-117", 1023, 300.0, 0.111}},
       {0x0074, Model{"DX-116", 1023, 300.0, 0.111}},
       {0x0071, Model{"DX-113", 1023, 300.0, 0.111}}
+    };
+    /// MX series
+    static const std::vector<uint16_t> mxSeries {
+      0x0140, 0x0136, 0x001D, 0x0168
+    };
+    /// Torque controllable models
+    static const std::vector<uint16_t> torqueControlModels {
+      0x0140, 0x0136
     };
 
   }
