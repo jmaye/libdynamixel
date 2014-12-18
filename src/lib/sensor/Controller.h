@@ -130,6 +130,12 @@ namespace dynamixel {
     /// Sets the counter-clockwise angle limit
     void setCcwAngleLimit(uint8_t id, uint16_t ccwAngleLimit, bool
       registered = false);
+    /// Returns the angle limits
+    void getAngleLimits(uint8_t id, uint16_t& cwAngleLimit, uint16_t&
+      ccwAngleLimit);
+    /// Sets the angle limits
+    void setAngleLimits(uint8_t id, uint16_t cwAngleLimit, uint16_t
+      ccwAngleLimit, bool registered = false);
     /// Returns the highest limit temperature
     uint8_t getHighestLimitTemperature(uint8_t id);
     /// Sets the highest limit temperature (use with caution!)

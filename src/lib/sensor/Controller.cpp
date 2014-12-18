@@ -298,6 +298,32 @@ namespace dynamixel {
         getErrorString(status->getInstructionOrError()));
   }
 
+  void Controller::getAngleLimits(uint8_t id, uint16_t& cwAngleLimit, uint16_t&
+      ccwAngleLimit) {
+    auto status = readData(id, Addresses::CWAngleLimitLow, 4);
+    if (status->getInstructionOrError())
+      throw IOException("Controller::getAngleLimits(): \n" +
+        getErrorString(status->getInstructionOrError()));
+    cwAngleLimit = static_cast<uint16_t>(status->getParameters()[1]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[0]);
+    ccwAngleLimit = static_cast<uint16_t>(status->getParameters()[3]) << 8 |
+      static_cast<uint16_t>(status->getParameters()[2]);
+  }
+
+  void Controller::setAngleLimits(uint8_t id, uint16_t cwAngleLimit, uint16_t
+      ccwAngleLimit, bool registered) {
+    std::vector<uint8_t> data;
+    data.push_back(reinterpret_cast<uint8_t*>(&cwAngleLimit)[0]);
+    data.push_back(reinterpret_cast<uint8_t*>(&cwAngleLimit)[1]);
+    data.push_back(reinterpret_cast<uint8_t*>(&ccwAngleLimit)[0]);
+    data.push_back(reinterpret_cast<uint8_t*>(&ccwAngleLimit)[1]);
+    auto status = registered ? regWriteData(id, Addresses::CWAngleLimitLow,
+      data) : writeData(id, Addresses::CWAngleLimitLow, data);
+    if (status->getInstructionOrError())
+      throw IOException("Controller::setAngleLimits(): \n" +
+        getErrorString(status->getInstructionOrError()));
+  }
+
   uint8_t Controller::getHighestLimitTemperature(uint8_t id) {
     auto status = readData(id, Addresses::highestLimitTemperature, 1);
     if (status->getInstructionOrError())
