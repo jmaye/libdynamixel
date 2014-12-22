@@ -1,3 +1,9 @@
+libdynamixel (0.1-11) trusty; urgency=low
+
+  * Increasing default serial timeout 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Mon, 22 Dec 2014 13:31:23 +0100
+
 libdynamixel (0.1-10) trusty; urgency=low
 
   * New helper function
