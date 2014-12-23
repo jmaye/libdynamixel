@@ -1,4 +1,10 @@
-libdynamixel (0.1-13) trusty; urgency=medium
+libdynamixel (0.1-14) trusty; urgency=low
+
+  * Version 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 23 Dec 2014 16:39:14 +0100
+
+libdynamixel (0.1-13) trusty; urgency=low
 
   * Small bug 
 
