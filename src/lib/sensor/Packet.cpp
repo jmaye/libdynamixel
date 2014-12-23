@@ -18,6 +18,8 @@
 
 #include "sensor/Packet.h"
 
+#include <string>
+
 #include "com/BinaryReader.h"
 #include "com/BinaryWriter.h"
 #include "exceptions/IOException.h"
@@ -37,13 +39,23 @@ namespace dynamixel {
   }
 
   void Packet::read(BinaryReader& stream) {
+    uint8_t input;
+    stream >> input;
     while (true) {
-      uint16_t identifier;
-      stream >> identifier;
-      if (identifier == identifier_)
-        break;
+      while (input != 0xFF)
+        stream >> input;
+      stream >> input;
+      if (input != 0xFF)
+        continue;
+      stream >> input;
+      if (input != id_)
+        continue;
+      break;
     }
-    stream >> id_ >> length_ >> instructionOrError_;
+    stream >> length_;
+    if (length_ < 2)
+      throw IOException("Packet::read(): wrong length");
+    stream >> instructionOrError_;
     parameters_.clear();
     parameters_.reserve(length_ - 2);
     for (size_t i = 0; i < (static_cast<size_t>(length_) - 2); ++i) {

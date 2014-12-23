@@ -46,8 +46,9 @@ namespace dynamixel {
     *this << *packet;
   }
 
-  std::shared_ptr<Packet> Controller::readPacket() {
+  std::shared_ptr<Packet> Controller::readPacket(uint8_t id) {
     auto packet = std::make_shared<Packet>();
+    packet->setId(id);
     *this >> *packet;
     return packet;
   }
@@ -60,7 +61,7 @@ namespace dynamixel {
     packet->setChecksum(packet->computeChecksum());
     try {
       writePacket(packet);
-      auto status = readPacket();
+      auto status = readPacket(id);
       if (status->getInstructionOrError())
         return false;
       else
@@ -79,7 +80,7 @@ namespace dynamixel {
     packet->setChecksum(packet->computeChecksum());
     try {
       writePacket(packet);
-      auto status = readPacket();
+      auto status = readPacket(id);
       if (status->getInstructionOrError())
         return false;
       else
@@ -98,7 +99,7 @@ namespace dynamixel {
     packet->setChecksum(packet->computeChecksum());
     try {
       writePacket(packet);
-      auto status = readPacket();
+      auto status = readPacket(id);
       if (status->getInstructionOrError())
         return false;
       else
@@ -122,7 +123,7 @@ namespace dynamixel {
     packet->setParameters(parameters);
     packet->setChecksum(packet->computeChecksum());
     writePacket(packet);
-    return readPacket();
+    return readPacket(id);
   }
 
   std::shared_ptr<Packet> Controller::regWriteData(uint8_t id, uint8_t address,
@@ -138,7 +139,7 @@ namespace dynamixel {
     packet->setParameters(parameters);
     packet->setChecksum(packet->computeChecksum());
     writePacket(packet);
-    return readPacket();
+    return readPacket(id);
   }
 
   std::shared_ptr<Packet> Controller::syncWriteData(uint8_t address, const
@@ -165,7 +166,7 @@ namespace dynamixel {
     packet->setParameters(parameters);
     packet->setChecksum(packet->computeChecksum());
     writePacket(packet);
-    return readPacket();
+    return readPacket(broadcastingId);
   }
 
   std::shared_ptr<Packet> Controller::readData(uint8_t id, uint8_t address,
@@ -181,7 +182,7 @@ namespace dynamixel {
     packet->setParameters(parameters);
     packet->setChecksum(packet->computeChecksum());
     writePacket(packet);
-    return readPacket();
+    return readPacket(id);
   }
 
   uint16_t Controller::getModelNumber(uint8_t id) {

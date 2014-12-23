@@ -503,7 +503,7 @@ namespace dynamixel {
     /// Writes a packet to the Dynamixel device
     void writePacket(const std::shared_ptr<Packet>& packet);
     /// Reads a packet from the Dynamixel device
-    std::shared_ptr<Packet> readPacket();
+    std::shared_ptr<Packet> readPacket(uint8_t id);
     /** @}
       */
 

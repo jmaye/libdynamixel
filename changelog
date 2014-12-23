@@ -1,3 +1,9 @@
+libdynamixel (0.1-12) trusty; urgency=low
+
+  * Adding more checks 
+
+ -- Jerome Maye <jerome.maye@mavt.ethz.ch>  Tue, 23 Dec 2014 15:14:04 +0100
+
 libdynamixel (0.1-11) trusty; urgency=low
 
   * Increasing default serial timeout 
