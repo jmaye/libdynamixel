@@ -397,7 +397,8 @@ namespace dynamixel {
     static uint16_t torqueRatio2raw(double torqueRatio, uint16_t
         maxValue = 1023) {
       return torqueRatio > 0 ? std::round(torqueRatio * maxValue) :
-        static_cast<uint16_t>(std::round(torqueRatio * maxValue)) | 0x0400;
+        static_cast<uint16_t>(std::round(std::fabs(torqueRatio) * maxValue)) |
+        0x0400;
     }
     /// Converts raw speed to revolutions per minute
     static double raw2rpm(uint16_t rawSpeed, double rpmPerTick = 0.114) {
@@ -407,7 +408,7 @@ namespace dynamixel {
     /// Converts revolutions per minute to raw speed
     static uint16_t rpm2raw(double rpm, double rpmPerTick = 0.114) {
       return rpm > 0 ? std::round(rpm / rpmPerTick) :
-        static_cast<uint16_t>(std::round(rpm / rpmPerTick)) | 0x0400;
+        static_cast<uint16_t>(std::round(std::fabs(rpm) / rpmPerTick)) | 0x0400;
     }
     /// Converts raw acceleration to radians per second^2
     static double raw2rps2(uint8_t rawAcceleration, uint8_t maxValue = 254,
@@ -438,7 +439,8 @@ namespace dynamixel {
     /// Converts torque in amper to raw torque
     static uint16_t amp2rawtorque(double torque, double resolution = 0.0045) {
       return torque > 0 ? std::round(torque / resolution) :
-        static_cast<uint16_t>(std::round(torque / resolution)) | 0x0400;
+        static_cast<uint16_t>(std::round(std::fabs(torque) / resolution)) |
+        0x0400;
     }
     /// Converts raw P gain to K_p
     static double raw2Kp(uint8_t rawPGain, double factor = 1.0 / 8.0) {
